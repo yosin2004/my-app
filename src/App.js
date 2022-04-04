@@ -1,13 +1,4 @@
 import { useState } from "react";
-import "./App.css";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
-import Add from "@mui/icons-material/Add";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,181 +6,97 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import IconButton from "@mui/material/IconButton";
-import CheckIcon from "@mui/icons-material/Check";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import TextField from "@mui/material/TextField";
+import "./App.css";
+import Button from "@mui/material/Button";
+import Modal from "./components/Modal";
 
-function App() {
+const initialState = {
+  id: null,
+  name: "",
+  age: null,
+  course: "",
+  phone: "",
+};
+
+function App(props) {
+  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState(initialState);
   const [addOpen, setAddOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-  const [text, setText] = useState("");
-  const [todos, setTodos] = useState([]);
-  const [editIndex, setEditIndex] = useState(0);
+  const [id, setId] = useState(0);
 
-  const handleAddOpen = () => {
+  const handleOpenAdd = () => {
     setAddOpen(true);
-    setText("");
+    setUser(initialState);
   };
 
-  const handleAddClose = () => {
+  const handleCloseAdd = () => {
     setAddOpen(false);
-  };
-
-  const handleEditOpen = (index) => {
-    setEditOpen(true);
-    setEditIndex(index);
-    setText(todos[index].text);
-  };
-
-  const handleEditClose = () => {
-    setEditOpen(false);
   };
 
   const handleChange = (event) => {
-    const { value } = event.target;
-    setText(value);
-  };
+    const { name, value } = event.target;
 
-  const addTodo = () => {
-    if (text === "") return;
-
-    setTodos((prev) => {
-      return [
-        ...prev,
-        {
-          text: text,
-          isCompleted: false,
-        },
-      ];
+    setUser((prev) => {
+      return { ...prev, [name]: value };
     });
-    setText("");
+  };
+
+  const addUser = () => {
+    let addUser = { ...user };
+    addUser.id = id + 1;
+    setId(id + 1);
+    setUsers((prev) => {
+      return [...prev, addUser];
+    });
     setAddOpen(false);
-  };
-
-  const editTodo = () => {
-    if (text === "") return;
-    let todo = [...todos];
-
-    todo[editIndex].text = text;
-
-    setTodos(todo);
-    setEditOpen(false);
-  };
-
-  const deleteTodo = (index) => {
-    let todo = [...todos];
-    todo.splice(index, 1);
-
-    setTodos(todo);
-  };
-
-  const completeTodo = (index) => {
-    let todo = [...todos];
-
-    todo[index].isCompleted = todo[index].isCompleted ? false : true;
-
-    setTodos(todo);
   };
 
   return (
     <>
       <Button
-        onClick={handleAddOpen}
-        color="success"
         variant="contained"
-        startIcon={<Add />}
         style={{ marginBottom: 10 }}
+        onClick={handleOpenAdd}
       >
         Add
       </Button>
-
-      {/* Table */}
       <TableContainer component={Paper}>
-        <Table>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Text</TableCell>
-              <TableCell>Complete</TableCell>
-              <TableCell>Delete</TableCell>
-              <TableCell>Edit</TableCell>
+              <TableCell>ID</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Age</TableCell>
+              <TableCell>Course</TableCell>
+              <TableCell>Phone</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {todos.map((elem, index) => (
-              <TableRow key={index}>
-                <TableCell
-                  style={
-                    elem.isCompleted ? { textDecoration: "line-through" } : {}
-                  }
-                >
-                  {elem.text}
-                </TableCell>
-                <TableCell>
-                  <IconButton onClick={() => completeTodo(index)} color="info">
-                    <CheckIcon />
-                  </IconButton>
-                </TableCell>
-                <TableCell>
-                  <IconButton onClick={() => deleteTodo(index)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-                <TableCell>
-                  <IconButton
-                    onClick={() => handleEditOpen(index)}
-                    color="warning"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+            {users.map((user) => {
+              return (
+                <TableRow key={user.id}>
+                  <TableCell>{user.id}</TableCell>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.age}</TableCell>
+                  <TableCell>{user.course}</TableCell>
+                  <TableCell>{user.phone}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
-      {/* Table */}
 
-      {/* Dialog Add */}
-      <Dialog open={addOpen} onClose={handleAddClose}>
-        <DialogTitle>Добавление</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Text"
-            onChange={handleChange}
-            value={text}
-            variant="standard"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAddClose}>Отмена</Button>
-          <Button onClick={addTodo} autoFocus>
-            Добавить
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {/* Dialog Add */}
-
-      {/* Dialog Edit */}
-      <Dialog open={editOpen} onClose={handleEditClose}>
-        <DialogTitle>Изменение</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Text"
-            onChange={handleChange}
-            value={text}
-            variant="standard"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleEditClose}>Отмена</Button>
-          <Button onClick={editTodo} autoFocus>
-            Изменить
-          </Button>
-        </DialogActions>
-      </Dialog>
-      {/* Dialog Edit */}
+      {/* Modal Add */}
+      <Modal
+        open={addOpen}
+        handleClose={handleCloseAdd}
+        title="Add User"
+        handleChange={handleChange}
+        send="add"
+        addEdit={addUser}
+        user={user}
+      />
     </>
   );
 }
