@@ -1,38 +1,55 @@
 import { useState } from "react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import "antd/dist/antd.css";
 import "./App.css";
-import Button from "@mui/material/Button";
-import Modal from "./components/Modal";
+import { Button, Table } from "antd";
+import OwnModal from "./components/OwnModal";
 
 const initialState = {
   id: null,
   name: "",
-  age: null,
+  age: "",
   course: "",
   phone: "",
 };
 
 function App(props) {
+  // List Users
   const [users, setUsers] = useState([]);
+  // User
   const [user, setUser] = useState(initialState);
+  // Add Modal State
   const [addOpen, setAddOpen] = useState(false);
+  // Edit Modal State
+  const [editOpen, setEditOpen] = useState(false);
+  // Id for add user
   const [id, setId] = useState(0);
+  // EditId for change User
+  const [editId, setEditId] = useState(null);
 
+  // Open Add Modal
   const handleOpenAdd = () => {
     setAddOpen(true);
     setUser(initialState);
   };
 
+  // Close Add Modal
   const handleCloseAdd = () => {
     setAddOpen(false);
+    setUser(initialState);
   };
 
+  // Edit Modal Open
+  const handleOpenEdit = (id) => {
+    setEditOpen(true);
+    setEditId(id);
+    setUser(users.filter((item) => item.id === id)[0]);
+  };
+
+  const handleCloseEdit = () => {
+    setEditOpen(false);
+  };
+
+  // handleChange of Inputs
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -41,6 +58,7 @@ function App(props) {
     });
   };
 
+  // Add User
   const addUser = () => {
     let addUser = { ...user };
     addUser.id = id + 1;
@@ -49,53 +67,102 @@ function App(props) {
       return [...prev, addUser];
     });
     setAddOpen(false);
+    setUser(initialState);
   };
 
+  // Delete User
+  const deleteUser = (id) => {
+    const copy = [...users].filter((item) => item.id !== id);
+    setUsers(copy);
+  };
+
+  // Edit User
+  const editUser = () => {
+    const editUsers = [...users].map((elem) => {
+      if (elem.id === editId) {
+        elem.name = user.name;
+        elem.age = user.age;
+        elem.course = user.course;
+        elem.phone = user.phone;
+        return elem;
+      }
+      return elem;
+    });
+
+    setUsers(editUsers);
+    setEditOpen(false);
+  };
+
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+    },
+    {
+      title: "Course",
+      dataIndex: "course",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      render: (elem) => {
+        return <a>{elem}</a>;
+      },
+    },
+    {
+      title: "Delete",
+      render: (elem) => {
+        return <Button onClick={() => deleteUser(elem.id)}>Delete</Button>;
+      },
+    },
+    {
+      title: "Edit",
+      render: (elem) => {
+        return <Button onClick={() => handleOpenEdit(elem.id)}>Edit</Button>;
+      },
+    },
+  ];
   return (
     <>
-      <Button
-        variant="contained"
-        style={{ marginBottom: 10 }}
-        onClick={handleOpenAdd}
-      >
-        Add
+      {/* Add user */}
+      <Button type="primary" onClick={handleOpenAdd}>
+        Primary Button
       </Button>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Age</TableCell>
-              <TableCell>Course</TableCell>
-              <TableCell>Phone</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map((user) => {
-              return (
-                <TableRow key={user.id}>
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.age}</TableCell>
-                  <TableCell>{user.course}</TableCell>
-                  <TableCell>{user.phone}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+
+      {/* Table */}
+      <Table
+        columns={columns}
+        dataSource={users}
+        size="middle"
+        pagination={false}
+      />
 
       {/* Modal Add */}
-      <Modal
+      <OwnModal
+        title="Add"
         open={addOpen}
-        handleClose={handleCloseAdd}
-        title="Add User"
         handleChange={handleChange}
-        send="add"
-        addEdit={addUser}
+        handleClose={handleCloseAdd}
         user={user}
+        addEdit={addUser}
+      />
+
+      {/* Modal Edit */}
+      <OwnModal
+        title="Edit"
+        open={editOpen}
+        handleChange={handleChange}
+        user={user}
+        handleClose={handleCloseEdit}
+        addEdit={editUser}
       />
     </>
   );
