@@ -1,8 +1,13 @@
 import { useState } from "react";
 import "antd/dist/antd.css";
 import "./App.css";
-import { Button, Table } from "antd";
 import OwnModal from "./components/OwnModal";
+import Table from "./components/Table/Table";
+import Thead from "./components/Table/Thead/Thead";
+import Tbody from "./components/Table/Tbody/Tbody";
+import Tr from "./components/Table/Tr/Tr";
+import Th from "./components/Table/Th/Th";
+import Td from "./components/Table/Td/Td";
 
 const initialState = {
   id: null,
@@ -93,77 +98,46 @@ function App(props) {
     setEditOpen(false);
   };
 
-  const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-    },
-    {
-      title: "Name",
-      dataIndex: "name",
-    },
-    {
-      title: "Age",
-      dataIndex: "age",
-    },
-    {
-      title: "Course",
-      dataIndex: "course",
-    },
-    {
-      title: "Phone",
-      dataIndex: "phone",
-      render: (elem) => {
-        return <a>{elem}</a>;
-      },
-    },
-    {
-      title: "Delete",
-      render: (elem) => {
-        return <Button onClick={() => deleteUser(elem.id)}>Delete</Button>;
-      },
-    },
-    {
-      title: "Edit",
-      render: (elem) => {
-        return <Button onClick={() => handleOpenEdit(elem.id)}>Edit</Button>;
-      },
-    },
-  ];
   return (
     <>
       {/* Add user */}
-      <Button type="primary" onClick={handleOpenAdd}>
-        Primary Button
-      </Button>
 
       {/* Table */}
-      <Table
-        columns={columns}
-        dataSource={users}
-        size="middle"
-        pagination={false}
-      />
-
+      <Table>
+        <Thead>
+          <Tr>
+            <Th>ID</Th>
+            <Th>Name</Th>
+            <Th>Age</Th>
+            <Th>Course</Th>
+            <Th>Phone</Th>
+            <Th>Delete</Th>
+            <Th>Edit</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {users.map((elem) => {
+            return (
+              <Tr key={elem.id}>
+                <Td>{elem.id}</Td>
+                <Td>{elem.name}</Td>
+                <Td>{elem.age}</Td>
+                <Td>{elem.course}</Td>
+                <Td>{elem.phone}</Td>
+                <Td>
+                  <button>del</button>
+                </Td>
+                <Td>
+                  <button>edit</button>
+                </Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
       {/* Modal Add */}
-      <OwnModal
-        title="Add"
-        open={addOpen}
-        handleChange={handleChange}
-        handleClose={handleCloseAdd}
-        user={user}
-        addEdit={addUser}
-      />
 
       {/* Modal Edit */}
-      <OwnModal
-        title="Edit"
-        open={editOpen}
-        handleChange={handleChange}
-        user={user}
-        handleClose={handleCloseEdit}
-        addEdit={editUser}
-      />
     </>
   );
 }
