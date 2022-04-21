@@ -30,72 +30,54 @@ function Copyright() {
   );
 }
 
-const initialAlbum = {
+const initialState = {
   id: null,
-  img: "",
-  title: "",
-  desc: "",
-};
+  name: "",
+  role: "",
+  image: ""
+}
 
 const theme = createTheme();
 
 export default function Album() {
-  const [albums, setAlbums] = useState([]);
-  const [album, setAlbum] = useState(initialAlbum);
-  const [addOpen, setAddOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
-  const [viewOpen, setViewOpen] = useState(false);
-  const [id, setId] = useState(0);
-  const [editId, setEditId] = useState(0);
 
+  const [hero, setHero] = useState(initialState)
+  const [heroes, setHeroes] = useState([])
+  const [addOpen, setAddOpen] = useState(false)
+  const [id, setId] = useState(0)
+  const [editId, setEditId] = useState(0)
+        
   const handleAddOpen = () => {
-    setAlbum(initialAlbum);
-    setAddOpen(true);
-  };
-
+    setAddOpen(true)
+  }    
+  
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setAlbum((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const addAlbum = () => {
-    let newAlbum = { ...album };
-    newAlbum.id = id + 1;
-    setId(id + 1);
-    setAlbums((prev) => [...prev, newAlbum]);
-    setAddOpen(false);
-  };
-
-  const deleteAlbum = (id) => {
-    const deletedAlbum = [...albums].filter((e) => e.id !== id);
-    setAlbums(deletedAlbum);
-  };
-
-  const editModalOpen = (id) => {
-    setEditId(id);
-    setAlbum(albums.find((e) => e.id === id));
-    setEditOpen(true);
-  };
-
-  const editAlbum = () => {
-    const updateAlbums = [...albums].map((elem) => {
-      if (elem.id === editId) {
-        elem.img = album.img;
-        elem.title = album.title;
-        elem.desc = album.desc;
-        return elem;
+    const {name, value} = e.target
+    setHero((prev) => ({...prev, [name]: value}))
+  }
+    
+  const addHero = () => {
+    let newHero = {...hero}
+    newHero.id = id + 1
+    setId(id + 1)
+    setHeroes((prev) => [...prev, newHero])
+    setAddOpen(false)
+  }
+  const deletHero = (id) => {
+    const deletedHero = [...heroes].filter((e) => e.id !==id)
+    setHeroes(deletedHero)
+    setHero(initialState)
+  }
+  const editHero = () => {
+    const updateHero = [...heroes].map((e) => {
+      if(e.id === editId){
+        e.image === hero.image;
+        e.name === hero.name;
+        e.role === hero.role;
       }
-      return elem;
-    });
-
-    setAlbums(updateAlbums);
-    setEditOpen(false);
-  };
-
-  const viewAlbum = (id) => {
-    setViewOpen(true);
-    setAlbum(albums.find((e) => e.id === id));
-  };
+      return e
+    })
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -108,7 +90,7 @@ export default function Album() {
             style={{ cursor: "pointer" }}
           />
           <Typography variant="h6" color="inherit" noWrap>
-            Album layout
+            Album 
           </Typography>
         </Toolbar>
       </AppBar>
@@ -116,7 +98,7 @@ export default function Album() {
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {albums.map((card) => (
+            {heroes.map((card) => (
               <Grid item key={card.id} xs={12} sm={6} md={4}>
                 <Card
                   sx={{
@@ -128,18 +110,18 @@ export default function Album() {
                   <CardMedia component="img" image={card.img} alt="random" />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      {card.title}
+                      {card.name}
                     </Typography>
-                    <Typography>{card.desc}</Typography>
+                    <Typography>{card.role}</Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small" onClick={() => viewAlbum(card.id)}>
+                    {/* <Button size="small" onClick={() => viewAlbum(card.id)}>
                       View
                     </Button>
                     <Button size="small" onClick={() => editModalOpen(card.id)}>
                       Edit
-                    </Button>
-                    <Button size="small" onClick={() => deleteAlbum(card.id)}>
+                    </Button> */}
+                    <Button size="small" onClick={() => deletHero(card.id)}>
                       Delete
                     </Button>
                   </CardActions>
@@ -165,14 +147,14 @@ export default function Album() {
         <Copyright />
       </Box>
       <OwnModal
-        album={album}
+        hero={hero}
         titleModal="Add"
-        addEdit={addAlbum}
+        addEdit={addHero}
         handleChange={handleChange}
         handleClose={() => setAddOpen(false)}
         open={addOpen}
       />
-      <OwnModal
+      {/* <OwnModal
         album={album}
         titleModal="Edit"
         addEdit={editAlbum}
@@ -186,7 +168,7 @@ export default function Album() {
         isView={true}
         open={viewOpen}
         handleClose={() => setViewOpen(false)}
-      />
+      /> */}
 
       {/* End footer */}
     </ThemeProvider>

@@ -10,12 +10,12 @@ function OwnModal(props) {
     open,
     handleClose,
     titleModal,
-    album,
+    hero,
     handleChange,
     addEdit,
     isView = false,
   } = props;
-  const { img, title, desc } = album;
+  const { img, name, role } = hero;
 
   return (
     <>
@@ -30,8 +30,8 @@ function OwnModal(props) {
           {isView ? (
             <>
               <img src={img} alt="img" />
-              <p>{title}</p>
-              <p>{desc}</p>
+              <p>{name}</p>
+              <p>{role}</p>
             </>
           ) : (
             <>
@@ -45,17 +45,17 @@ function OwnModal(props) {
               </div>
               <div style={{ margin: 5 }}>
                 <TextField
-                  label="title"
-                  name="title"
-                  value={title}
+                  label="name"
+                  name="name"
+                  value={name}
                   onChange={handleChange}
                 />
               </div>
               <div style={{ margin: 5 }}>
                 <TextField
-                  label="desc"
-                  name="desc"
-                  value={desc}
+                  label="role"
+                  name="role"
+                  value={role}
                   onChange={handleChange}
                 />
               </div>

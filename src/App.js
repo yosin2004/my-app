@@ -6,8 +6,7 @@ import Album from "./container/Album/Album";
 function App() {
   return (
     <>
-      <Album />
-      {/* <Carousel /> */}
+      <Album/>
     </>
   );
 }
